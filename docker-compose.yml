@@ -1,0 +1,49 @@
+version: '3.8'
+
+services:
+  # FastAPI Backend
+  api:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=postgresql://lumora:lumora_password@db:5432/lumora_db
+      - SECRET_KEY=${SECRET_KEY:-change-this-in-production}
+      - DEBUG=False
+    volumes:
+      - ./saved_models:/app/saved_models
+    depends_on:
+      - db
+    restart: unless-stopped
+
+  # PostgreSQL Database
+  db:
+    image: postgres:15-alpine
+    environment:
+      - POSTGRES_USER=lumora
+      - POSTGRES_PASSWORD=lumora_password
+      - POSTGRES_DB=lumora_db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    restart: unless-stopped
+
+  # pgAdmin (optional - for database management)
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=admin@lumora.local
+      - PGADMIN_DEFAULT_PASSWORD=admin
+    ports:
+      - "5050:80"
+    depends_on:
+      - db
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+
+networks:
+  default:
+    name: lumora_network
