@@ -12,7 +12,7 @@ class Settings(BaseSettings):
     DEBUG: bool = True
     
     # Database
-    DATABASE_URL: str = "sqlite:///./lumora.db"  # Default to SQLite for development
+    DATABASE_URL: str
     # For PostgreSQL: "postgresql://user:password@localhost/lumora_db"
     
     # Security
@@ -52,6 +52,7 @@ class Settings(BaseSettings):
     class Config:
         env_file = ".env"
         case_sensitive = True
+        extra = "ignore"  # Ignore extra environment variables
 
 
 settings = Settings()

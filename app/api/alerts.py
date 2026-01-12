@@ -9,7 +9,7 @@ from app.api.auth import get_current_user
 router = APIRouter(prefix="/alerts", tags=["Alerts"])
 
 
-@router.get("/", response_model=List[Alert])
+@router.get("/", response_model=List[dict])
 async def get_alerts(
     skip: int = Query(0, ge=0),
     limit: int = Query(50, ge=1, le=500),
@@ -38,7 +38,7 @@ async def get_unread_count(
     return {"unread_count": count}
 
 
-@router.get("/{alert_id}", response_model=Alert)
+@router.get("/{alert_id}", response_model=dict)
 async def get_alert(
     alert_id: int,
     current_user = Depends(get_current_user),
@@ -56,7 +56,7 @@ async def get_alert(
     return alert
 
 
-@router.patch("/{alert_id}/read", response_model=Alert)
+@router.patch("/{alert_id}/read", response_model=dict)
 async def mark_alert_read(
     alert_id: int,
     current_user = Depends(get_current_user),
@@ -74,7 +74,7 @@ async def mark_alert_read(
     return alert
 
 
-@router.patch("/{alert_id}/resolve", response_model=Alert)
+@router.patch("/{alert_id}/resolve", response_model=dict)
 async def mark_alert_resolved(
     alert_id: int,
     current_user = Depends(get_current_user),

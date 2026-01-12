@@ -5,8 +5,7 @@ from contextlib import asynccontextmanager
 import logging
 
 from app.config import settings
-from app.database import init_db
-from app.api import auth, user, mood, depression_risk, alerts, charts, chatbot
+from app.api import auth, user, mood, alerts, charts, chatbot
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -18,22 +17,6 @@ async def lifespan(app: FastAPI):
     """Startup and shutdown events"""
     # Startup
     logger.info("Starting Lumora Mental Health API...")
-    
-    # Initialize database
-    try:
-        init_db()
-        logger.info("Database initialized successfully")
-    except Exception as e:
-        logger.error(f"Failed to initialize database: {e}")
-    
-    # Load ML models
-    try:
-        from app.ml.model_loader import model_loader
-        model_loader.load_model()
-        model_loader.load_encoders()
-        logger.info("ML models loaded successfully")
-    except Exception as e:
-        logger.warning(f"Failed to load ML models: {e}")
     
     yield
     
@@ -74,7 +57,6 @@ async def global_exception_handler(request: Request, exc: Exception):
 app.include_router(auth.router)
 app.include_router(user.router)
 app.include_router(mood.router)
-app.include_router(depression_risk.router)
 app.include_router(alerts.router)
 app.include_router(charts.router)
 app.include_router(chatbot.router)
@@ -105,6 +87,9 @@ async def health_check():
         "version": settings.APP_VERSION
     }
 
+@app.get("/dudu")
+async def dudu():
+    return {"message": "Dudu loves Bubu!", "partner": "Bubu", "age": "Bubu"}
 
 # API info endpoint
 @app.get("/api/info")

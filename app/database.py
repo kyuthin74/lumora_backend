@@ -1,30 +1,15 @@
 from sqlalchemy import create_engine
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker
-from app.config import settings
+from sqlalchemy.orm import declarative_base, sessionmaker
+from app.config import Settings
 
-# Create database engine
-engine = create_engine(
-    settings.DATABASE_URL,
-    connect_args={"check_same_thread": False} if "sqlite" in settings.DATABASE_URL else {}
-)
+settings = Settings()
+DATABASE_URL = settings.DATABASE_URL
 
-# Create session factory
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+engine = create_engine(DATABASE_URL)
+SessionLocal = sessionmaker(bind=engine)
 
-# Create base class for ORM models
 Base = declarative_base()
 
-
 def get_db():
-    """Dependency for database sessions"""
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
-
-
-def init_db():
-    """Initialize database - create all tables"""
-    Base.metadata.create_all(bind=engine)
+    with SessionLocal() as session:
+        yield session

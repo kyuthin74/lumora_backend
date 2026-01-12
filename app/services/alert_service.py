@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 from app.crud import alert as alert_crud
-from app.schemas.user import User
+from app.models.user import User
 from app.services.email_service import send_alert_email
 from app.config import settings
 from app.utils.helpers import format_alert_message

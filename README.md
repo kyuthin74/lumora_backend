@@ -76,7 +76,7 @@ lumora_backend/
 
 ### Prerequisites
 
-- Python 3.8+
+- Python 3.11
 - pip
 - (Optional) Virtual environment tool
 
