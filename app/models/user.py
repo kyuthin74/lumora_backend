@@ -1,7 +1,8 @@
 from pydantic import BaseModel, Field, ConfigDict
 from typing import Optional
-from datetime import datetime
-from sqlalchemy import Column, Integer, String, Boolean, DateTime
+from datetime import datetime, time
+from sqlalchemy import Column, Integer, String, Boolean, DateTime, Time
+from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 from app.database import Base
 
@@ -12,27 +13,42 @@ class User(Base):
     email = Column(String(255), unique=True, index=True, nullable=False)
     full_name = Column(String(100), nullable=False)
     hashed_password = Column(String(255), nullable=False)
-
-    is_active = Column(Boolean, default=True)
-
+    emergency_contact_name = Column(String(255), nullable=True)
+    emergency_contact_relationship = Column(String(255), nullable=True)
+    emergency_contact_email = Column(String(255), nullable=True)
+    is_notify_enabled = Column(Boolean, nullable=False, server_default="false")
+    daily_reminder_time = Column(Time(), nullable=True)
+    is_risk_alert_enabled = Column(Boolean, nullable=False, server_default="false")
     created_at = Column(DateTime(timezone=True), server_default=func.now())
-    updated_at = Column(
-        DateTime(timezone=True),
-        onupdate=func.now(),
-        nullable=True
-    )
+
+    # Relationships
+    mood_entries = relationship("MoodEntry", back_populates="user", cascade="all, delete-orphan")
+    depression_risk_results = relationship("DepressionRiskResult", back_populates="user", cascade="all, delete-orphan")
+    alerts = relationship("Alert", back_populates="user", cascade="all, delete-orphan")
 
 class UserCreate(BaseModel):
     """Schema for user registration"""
     email: str = Field(..., max_length=255)
     full_name: str = Field(..., min_length=1, max_length=100)
     password: str = Field(..., min_length=8, max_length=100)
+    emergency_contact_name: Optional[str] = Field(None, max_length=255)
+    emergency_contact_relationship: Optional[str] = Field(None, max_length=255)
+    emergency_contact_email: Optional[str] = Field(None, max_length=255)
+    is_notify_enabled: Optional[bool] = False
+    daily_reminder_time: Optional[time] = None
+    is_risk_alert_enabled: Optional[bool] = False
 
 class UserUpdate(BaseModel):
     """Schema for updating user profile"""
     full_name: Optional[str] = Field(None, min_length=1, max_length=100)
     email: Optional[str] = Field(None, max_length=255)
     password: Optional[str] = Field(None, min_length=8, max_length=100)
+    emergency_contact_name: Optional[str] = Field(None, max_length=255)
+    emergency_contact_relationship: Optional[str] = Field(None, max_length=255)
+    emergency_contact_email: Optional[str] = Field(None, max_length=255)
+    is_notify_enabled: Optional[bool] = None
+    daily_reminder_time: Optional[time] = None
+    is_risk_alert_enabled: Optional[bool] = None
 
 class UserLogin(BaseModel):
     """Schema for user login"""
@@ -44,9 +60,13 @@ class UserResponse(BaseModel):
     id: int
     email: str
     full_name: str
-    is_active: bool
     created_at: datetime
-    updated_at: Optional[datetime] = None
+    emergency_contact_name: Optional[str] = None
+    emergency_contact_relationship: Optional[str] = None
+    emergency_contact_email: Optional[str] = None
+    is_notify_enabled: bool
+    daily_reminder_time: Optional[time] = None
+    is_risk_alert_enabled: bool
     
     model_config = ConfigDict(from_attributes=True)
 

@@ -1,11 +1,25 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from app.database import get_db
-from app.models.user import UserResponse, UserUpdate
+from app.models.user import UserResponse, UserUpdate, UserCreate
 from app.crud import user as user_crud
 from app.api.auth import get_current_user
 
 router = APIRouter(prefix="/user", tags=["User"])
+
+
+@router.post("/signup", response_model=UserResponse, status_code=status.HTTP_201_CREATED)
+async def signup_user(payload: UserCreate, db: Session = Depends(get_db)):
+    """Create a new user account (JSON body: full_name, email, password, optional emergency contact prefs)."""
+    existing_user = user_crud.get_user_by_email(db, email=payload.email)
+    if existing_user:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Email already registered",
+        )
+
+    created = user_crud.create_user(db, user=payload)
+    return created
 
 
 @router.get("/profile", response_model=UserResponse)
