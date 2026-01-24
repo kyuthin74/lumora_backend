@@ -37,12 +37,13 @@ def decode_access_token(token: str) -> Optional[TokenData]:
     """Decode and verify JWT access token"""
     try:
         payload = jwt.decode(token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM])
-        user_id: int = payload.get("sub")
+        user_id_str = payload.get("sub")
         email: str = payload.get("email")
         
-        if user_id is None:
+        if user_id_str is None:
             return None
         
+        user_id = int(user_id_str)
         return TokenData(user_id=user_id, email=email)
-    except JWTError:
+    except (JWTError, ValueError):
         return None

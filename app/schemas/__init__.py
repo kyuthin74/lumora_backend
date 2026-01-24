@@ -9,6 +9,12 @@ from app.schemas.user import (
     Token,
     TokenData
 )
+from app.schemas.emergency_contact import (
+    EmergencyContactBase,
+    EmergencyContactCreate,
+    EmergencyContactUpdate,
+    EmergencyContactResponse,
+)
 from app.models.mood import (
     MoodLevel,
     SleepQuality,
