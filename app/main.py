@@ -5,7 +5,7 @@ from contextlib import asynccontextmanager
 import logging
 
 from app.config import settings
-from app.api import auth, user, mood, alerts, charts, chatbot
+from app.api import auth, user, mood, alerts, charts, chatbot, emergency_contact
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -56,6 +56,7 @@ async def global_exception_handler(request: Request, exc: Exception):
 # Include routers
 app.include_router(auth.router)
 app.include_router(user.router)
+app.include_router(emergency_contact.router)
 app.include_router(mood.router)
 app.include_router(alerts.router)
 app.include_router(charts.router)

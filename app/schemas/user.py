@@ -23,18 +23,15 @@
 
 from pydantic import BaseModel, EmailStr, Field
 from typing import Optional
-from datetime import datetime, time
+from datetime import datetime
 
 
 class UserBase(BaseModel):
     """Base user schema"""
     email: EmailStr
     full_name: str = Field(..., min_length=1, max_length=100)
-    emergency_contact_name: Optional[str] = Field(None, max_length=255)
-    emergency_contact_relationship: Optional[str] = Field(None, max_length=255)
-    emergency_contact_email: Optional[str] = Field(None, max_length=255)
     is_notify_enabled: Optional[bool] = False
-    daily_reminder_time: Optional[time] = None
+    daily_reminder_time: Optional[datetime] = None
     is_risk_alert_enabled: Optional[bool] = False
 
 
@@ -54,11 +51,8 @@ class UserUpdate(BaseModel):
     full_name: Optional[str] = Field(None, min_length=1, max_length=100)
     email: Optional[EmailStr] = None
     password: Optional[str] = Field(None, min_length=8, max_length=100)
-    emergency_contact_name: Optional[str] = Field(None, max_length=255)
-    emergency_contact_relationship: Optional[str] = Field(None, max_length=255)
-    emergency_contact_email: Optional[str] = Field(None, max_length=255)
     is_notify_enabled: Optional[bool] = None
-    daily_reminder_time: Optional[time] = None
+    daily_reminder_time: Optional[datetime] = None
     is_risk_alert_enabled: Optional[bool] = None
 
 
