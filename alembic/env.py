@@ -2,6 +2,7 @@ from logging.config import fileConfig
 from app import models
 from app.database import Base
 from app.models import User  # IMPORTANT
+from app.models.mood import MoodJournaling # IMPORTANT
 from app.config import settings
 
 

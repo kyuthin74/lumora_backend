@@ -1,7 +1,27 @@
-from pydantic import BaseModel, Field
-from typing import Optional
 from datetime import datetime
 from enum import Enum
+from typing import Optional
+
+from pydantic import BaseModel, Field
+from sqlalchemy import Column, DateTime, ForeignKey, Integer, String, Text
+from sqlalchemy.dialects.postgresql import ARRAY
+from sqlalchemy.orm import relationship
+from sqlalchemy.sql import func
+
+from app.database import Base
+
+
+class MoodJournaling(Base):
+    __tablename__ = "mood_journaling"
+
+    mood_id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
+    mood_type = Column(String(length=50), nullable=False)
+    activities = Column(ARRAY(String(length=100)), nullable=False)
+    note = Column(Text, nullable=True)
+    created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
+
+    user = relationship("User", back_populates="mood_journals")
 
 
 class MoodLevel(str, Enum):
@@ -56,7 +76,7 @@ class MoodEntryResponse(MoodEntryBase):
     created_at: datetime
     updated_at: Optional[datetime] = None
     depression_risk_score: Optional[float] = None
-    
+
     class Config:
         from_attributes = True
 
@@ -69,3 +89,5 @@ class MoodStats(BaseModel):
     total_entries: int
     period_start: datetime
     period_end: datetime
+
+
