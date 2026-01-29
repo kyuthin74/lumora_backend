@@ -24,7 +24,7 @@ from app.models.mood import (
     MoodEntryResponse,
     MoodStats
 )
-from app.models.depression_risk import (
+from app.models.depression_result import (
     DepressionRiskInput,
     DepressionRiskResult,
     DepressionRiskResponse,
