@@ -88,9 +88,9 @@ async def health_check():
         "version": settings.APP_VERSION
     }
 
-@app.get("/dudu")
-async def dudu():
-    return {"message": "Dudu loves Bubu!", "partner": "Bubu", "age": "Bubu"}
+# @app.get("/dudu")
+# async def dudu():
+#     return {"message": "Dudu loves Bubu!", "partner": "Bubu", "age": "Bubu"}
 
 # API info endpoint
 @app.get("/api/info")
