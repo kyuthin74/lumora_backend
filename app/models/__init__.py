@@ -4,7 +4,6 @@ from .user import User
 from .emergency_contact import EmergencyContact
 
 
-
 __all__ = [
     # User
     "UserBase", "UserCreate", "UserLogin", "UserUpdate", "UserResponse", "Token", "TokenData",
