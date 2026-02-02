@@ -30,4 +30,4 @@ class DepressionTest(Base):
 
     # relationship
     user = relationship("User", back_populates="depression_tests")
-    depression_results = relationship("DepressionResult", back_populates="depression_test", uselist=False, cascade="all, delete-orphan")
+    depression_risk_results = relationship("DepressionRiskResult", back_populates="depression_test", uselist=False, cascade="all, delete-orphan")

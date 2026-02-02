@@ -1,0 +1,50 @@
+from fastapi import APIRouter, Depends, HTTPException, status
+from sqlalchemy.orm import Session
+from typing import List
+
+from app.database import get_db
+from app.schemas.depression_test import (
+    DepressionTestCreate,
+    DepressionTestResponse,
+)
+from app.crud.depression_test import (
+    create_depression_test,
+    get_depression_test_by_id,
+    get_depression_tests_by_user,
+)
+
+router = APIRouter(
+    prefix="/depression-tests",
+    tags=["Depression Tests"],
+)
+
+
+@router.post(
+    "",
+    response_model=DepressionTestResponse,
+    status_code=status.HTTP_201_CREATED,
+)
+def create_test(
+    depression_test: DepressionTestCreate,
+    db: Session = Depends(get_db),
+):
+    return create_depression_test(db, depression_test)
+
+
+@router.get(
+    "/{test_id}",
+    response_model=DepressionTestResponse,
+)
+def read_test(test_id: int, db: Session = Depends(get_db)):
+    test = get_depression_test_by_id(db, test_id)
+    if not test:
+        raise HTTPException(status_code=404, detail="Depression test not found")
+    return test
+
+
+@router.get(
+    "",
+    response_model=List[DepressionTestResponse],
+)
+def read_user_tests(user_id: int, db: Session = Depends(get_db)):
+    return get_depression_tests_by_user(db, user_id)

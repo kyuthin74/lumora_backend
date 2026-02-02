@@ -1,5 +1,6 @@
 """Pydantic schemas for API request/response validation"""
 
+# ---------- User ----------
 from app.schemas.user import (
     UserBase,
     UserCreate,
@@ -7,39 +8,52 @@ from app.schemas.user import (
     UserUpdate,
     UserResponse,
     Token,
-    TokenData
+    TokenData,
 )
+
+# ---------- Emergency Contact ----------
 from app.schemas.emergency_contact import (
     EmergencyContactBase,
     EmergencyContactCreate,
     EmergencyContactUpdate,
     EmergencyContactResponse,
 )
-from app.models.mood import (
-    MoodLevel,
-    SleepQuality,
-    MoodEntryBase,
-    MoodEntryCreate,
-    MoodEntryUpdate,
-    MoodEntryResponse,
-    MoodStats
+
+# ---------- Mood ----------
+# from app.models.mood import (
+#     MoodEntryBase,
+#     MoodEntryCreate,
+#     MoodEntryUpdate,
+#     MoodEntryResponse,
+#     MoodStats,
+#     MoodLevel,
+#     SleepQuality,
+# )
+
+# ---------- Depression Test ----------
+from app.schemas.depression_test import (
+    DepressionTestCreate,
+    DepressionTestResponse,
 )
+
+# ---------- Depression Risk Result (GET only) ----------
 from app.schemas.depression_risk_result import (
-    DepressionRiskInput,
-    DepressionRiskResult,
-    DepressionRiskResponse,
-    RiskTrend
+    DepressionRiskResultResponse,
 )
+
+# ---------- Charts ----------
 from app.models.chart import (
     ChartDataPoint,
     MoodChartData,
     ActivityChartData,
     RiskChartData,
-    ComprehensiveChartData
+    ComprehensiveChartData,
 )
+
+# ---------- Chatbot ----------
 from app.models.chatbot import (
     ChatMessage,
     ChatRequest,
     ChatResponse,
-    ConversationContext
+    ConversationContext,
 )

@@ -6,6 +6,9 @@ from app.api import mood
 from app.api import alerts
 from app.api import charts
 from app.api import chatbot
+from app.api import depression_test
+from app.api import depression_risk_result
+
 
 __all__ = [
     "auth",
@@ -13,5 +16,7 @@ __all__ = [
     "mood",
     "alerts",
     "charts",
-    "chatbot"
+    "chatbot",
+    "depression_test",
+    "depression_risk_result"
 ]

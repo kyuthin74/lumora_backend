@@ -2,6 +2,8 @@
 
 from .user import User
 from .emergency_contact import EmergencyContact
+from .depression_test import DepressionTest
+from .depression_risk_result import DepressionRiskResult
 
 
 __all__ = [
@@ -12,10 +14,13 @@ __all__ = [
     # Mood
     "MoodLevel", "SleepQuality", "MoodEntryBase", "MoodEntryCreate", "MoodEntryUpdate", 
     "MoodEntryResponse", "MoodStats",
-    # Risk
-    "DepressionRiskInput", "DepressionRiskResult", "DepressionRiskResponse", "RiskTrend",
     # Charts
     "ChartDataPoint", "MoodChartData", "ActivityChartData", "RiskChartData", "ComprehensiveChartData",
     # Chatbot
     "ChatMessage", "ChatRequest", "ChatResponse", "ConversationContext"
+
+    # Depression Test
+    "DepressionTestCreate", "DepressionTestResponse",
+    # Depression Risk Result
+    "DepressionRiskResultResponse",
 ]
