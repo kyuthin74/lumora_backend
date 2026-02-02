@@ -5,7 +5,7 @@ from contextlib import asynccontextmanager
 import logging
 
 from app.config import settings
-from app.api import auth, user, mood, alerts, charts, chatbot, emergency_contact
+from app.api import auth, user, mood, alerts, charts, chatbot, emergency_contact, depression_test, depression_risk_result
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -61,6 +61,8 @@ app.include_router(mood.router)
 app.include_router(alerts.router)
 app.include_router(charts.router)
 app.include_router(chatbot.router)
+app.include_router(depression_test.router)
+app.include_router(depression_risk_result.router)
 
 
 # Root endpoint
@@ -88,9 +90,6 @@ async def health_check():
         "version": settings.APP_VERSION
     }
 
-# @app.get("/dudu")
-# async def dudu():
-#     return {"message": "Dudu loves Bubu!", "partner": "Bubu", "age": "Bubu"}
 
 # API info endpoint
 @app.get("/api/info")

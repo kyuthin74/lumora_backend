@@ -19,9 +19,8 @@ class User(Base):
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
     # Relationships
-    mood_entries = relationship("MoodEntry", back_populates="user", cascade="all, delete-orphan")
+    # mood_entries = relationship("MoodEntry", back_populates="user", cascade="all, delete-orphan")
     mood_journals = relationship("MoodJournaling", back_populates="user", cascade="all, delete-orphan")
-    depression_results = relationship("DepressionResult", back_populates="user", cascade="all, delete-orphan")
     depression_risk_results = relationship("DepressionRiskResult", back_populates="user", cascade="all, delete-orphan")
     alerts = relationship("Alert", back_populates="user", cascade="all, delete-orphan")
     emergency_contact = relationship("EmergencyContact", back_populates="user", uselist=False, cascade="all, delete-orphan")
