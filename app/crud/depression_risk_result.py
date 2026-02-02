@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 from sqlalchemy import desc
-from app.schemas.depression_risk_result import DepressionRiskResult
+from app.models.depression_risk_result import DepressionRiskResult
 from typing import List, Optional
 from datetime import datetime, timedelta
 
