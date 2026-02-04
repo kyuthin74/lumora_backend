@@ -22,7 +22,6 @@ class User(Base):
     # mood_entries = relationship("MoodEntry", back_populates="user", cascade="all, delete-orphan")
     mood_journals = relationship("MoodJournaling", back_populates="user", cascade="all, delete-orphan")
     depression_risk_results = relationship("DepressionRiskResult", back_populates="user", cascade="all, delete-orphan")
-    alerts = relationship("Alert", back_populates="user", cascade="all, delete-orphan")
     emergency_contact = relationship("EmergencyContact", back_populates="user", uselist=False, cascade="all, delete-orphan")
     depression_tests = relationship("DepressionTest", back_populates="user", cascade="all, delete-orphan")
     
@@ -77,6 +76,26 @@ class UserResponse(BaseModel):
     is_risk_alert_enabled: bool
     
     model_config = ConfigDict(from_attributes=True)
+
+
+class EmergencyContactInfo(BaseModel):
+    """Emergency contact info for profile response"""
+    contact_name: Optional[str] = None
+    contact_email: Optional[str] = None
+    relationship: Optional[str] = None
+
+
+class UserProfileResponse(BaseModel):
+    """Schema for user profile response with emergency contact"""
+    full_name: str
+    email: str
+    is_notify_enabled: Optional[bool] = False
+    daily_reminder_time: Optional[datetime] = None
+    is_risk_alert_enabled: Optional[bool] = False
+    emergency_contact: Optional[EmergencyContactInfo] = None
+
+    model_config = ConfigDict(from_attributes=True)
+
 
 class Token(BaseModel):
     """Schema for authentication token"""
