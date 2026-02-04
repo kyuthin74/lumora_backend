@@ -1,6 +1,7 @@
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
+from fastapi.openapi.utils import get_openapi
 from contextlib import asynccontextmanager
 import logging
 
@@ -24,6 +25,29 @@ async def lifespan(app: FastAPI):
     logger.info("Shutting down Lumora Mental Health API...")
 
 
+def custom_openapi():
+    """Custom OpenAPI schema to remove extra responses (422, etc.) from Swagger UI"""
+    if app.openapi_schema:
+        return app.openapi_schema
+    
+    openapi_schema = get_openapi(
+        title=settings.APP_NAME,
+        version=settings.APP_VERSION,
+        description="API for Lumora Mental Health Tracking Application",
+        routes=app.routes,
+    )
+    
+    # Remove 422 validation error responses from all endpoints
+    for path in openapi_schema.get("paths", {}).values():
+        for method in path.values():
+            responses = method.get("responses", {})
+            # Remove 422 Unprocessable Entity (validation error)
+            responses.pop("422", None)
+    
+    app.openapi_schema = openapi_schema
+    return app.openapi_schema
+
+
 # Create FastAPI application
 app = FastAPI(
     title=settings.APP_NAME,
@@ -31,6 +55,9 @@ app = FastAPI(
     description="API for Lumora Mental Health Tracking Application",
     lifespan=lifespan
 )
+
+# Override the default OpenAPI schema
+app.openapi = custom_openapi
 
 # Configure CORS
 app.add_middleware(

@@ -65,6 +65,26 @@ class UserResponse(UserBase):
         from_attributes = True
 
 
+class EmergencyContactInfo(BaseModel):
+    """Emergency contact info for profile response"""
+    contact_name: Optional[str] = None
+    contact_email: Optional[str] = None
+    relationship: Optional[str] = None
+
+
+class UserProfileResponse(BaseModel):
+    """Schema for user profile response with emergency contact"""
+    full_name: str
+    email: str
+    is_notify_enabled: Optional[bool] = False
+    daily_reminder_time: Optional[datetime] = None
+    is_risk_alert_enabled: Optional[bool] = False
+    emergency_contact: Optional[EmergencyContactInfo] = None
+
+    class Config:
+        from_attributes = True
+
+
 class Token(BaseModel):
     """Schema for authentication token"""
     access_token: str
