@@ -9,8 +9,8 @@ class DepressionRiskResult(Base):
     __tablename__ = "depression_risk_results"
     
     result_id = Column(Integer, primary_key=True, index=True)
-    user_id = Column(Integer, ForeignKey("users.id"), nullable=False, index=True)
-    depression_test_id = Column(Integer, ForeignKey("depression_tests.depression_test_id"), nullable=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
+    depression_test_id = Column(Integer, ForeignKey("depression_tests.depression_test_id", ondelete="CASCADE"), nullable=True, index=True)
     
     # Risk assessment results
     risk_level = Column(String, nullable=False)  # Low, Medium, High
