@@ -36,7 +36,7 @@ async def get_current_user(
     return user
 
 
-@router.post("/signup", response_model=UserResponse, status_code=status.HTTP_201_CREATED)
+@router.post("/signup", response_model=Token, status_code=status.HTTP_201_CREATED)
 async def signup(user: UserCreate, db: Session = Depends(get_db)):
     """Register a new user"""
     # Check if user already exists
@@ -57,7 +57,13 @@ async def signup(user: UserCreate, db: Session = Depends(get_db)):
         # Don't fail registration if email fails
         print(f"Failed to send welcome email: {e}")
     
-    return db_user
+    # Create access token
+    access_token = create_access_token(
+        data={"sub": str(db_user.id), "email": db_user.email},
+        expires_delta=timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
+    )
+    
+    return {"access_token": access_token, "token_type": "bearer", "user_id": db_user.id}
 
 
 @router.post("/login", response_model=Token)
@@ -82,7 +88,7 @@ async def login(
         expires_delta=timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
     )
     
-    return {"access_token": access_token, "token_type": "bearer"}
+    return {"access_token": access_token, "token_type": "bearer", "user_id": user.id}
 
 
 @router.post("/login-json", response_model=Token)
@@ -101,7 +107,7 @@ async def login_json(user_login: UserLogin, db: Session = Depends(get_db)):
         expires_delta=timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
     )
     
-    return {"access_token": access_token, "token_type": "bearer"}
+    return {"access_token": access_token, "token_type": "bearer", "user_id": user.id}
 
 
 @router.get("/me", response_model=UserResponse)
@@ -118,4 +124,4 @@ async def refresh_token(current_user = Depends(get_current_user)):
         expires_delta=timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
     )
     
-    return {"access_token": access_token, "token_type": "bearer"}
+    return {"access_token": access_token, "token_type": "bearer", "user_id": current_user.id}

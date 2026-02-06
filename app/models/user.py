@@ -101,6 +101,7 @@ class Token(BaseModel):
     """Schema for authentication token"""
     access_token: str
     token_type: str
+    user_id: int
 
 class TokenData(BaseModel):
     """Schema for token payload data"""
