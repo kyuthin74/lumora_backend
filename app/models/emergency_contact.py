@@ -10,7 +10,7 @@ class EmergencyContact(Base):
     __table_args__ = (UniqueConstraint("user_id", name="uq_emergency_contacts_user_id"),)
 
     id = Column(Integer, primary_key=True, index=True)
-    user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
+    user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
     contact_name = Column(String(255), nullable=True)
     contact_email = Column(String(255), nullable=True)
     contact_relationship = Column("relationship", String(255), nullable=True)

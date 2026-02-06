@@ -1,5 +1,4 @@
 from sqlalchemy import Column, Integer, String, Boolean, Text, DateTime, ForeignKey
-from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 from app.database import Base
 
@@ -27,6 +26,3 @@ class Alert(Base):
     # Timestamps
     created_at = Column(DateTime(timezone=True), server_default=func.now(), index=True)
     resolved_at = Column(DateTime(timezone=True), nullable=True)
-    
-    # Relationships
-    user = relationship("User", back_populates="alerts")
