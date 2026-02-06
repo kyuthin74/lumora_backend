@@ -89,6 +89,7 @@ class Token(BaseModel):
     """Schema for authentication token"""
     access_token: str
     token_type: str = "bearer"
+    user_id: int
 
 
 class TokenData(BaseModel):
