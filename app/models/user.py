@@ -14,7 +14,6 @@ class User(Base):
     full_name = Column(String(100), nullable=False)
     hashed_password = Column(String(255), nullable=False)
     is_notify_enabled = Column(Boolean, nullable=False, server_default="false")
-    daily_reminder_time = Column(DateTime(timezone=True), nullable=True)
     is_risk_alert_enabled = Column(Boolean, nullable=False, server_default="false")
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
@@ -45,7 +44,6 @@ class UserCreate(BaseModel):
     full_name: str = Field(..., min_length=1, max_length=100)
     password: str = Field(..., min_length=8, max_length=100)
     is_notify_enabled: Optional[bool] = False
-    daily_reminder_time: Optional[datetime] = None
     is_risk_alert_enabled: Optional[bool] = False
 
 class UserUpdate(BaseModel):
@@ -54,7 +52,6 @@ class UserUpdate(BaseModel):
     email: Optional[str] = Field(None, max_length=255)
     password: Optional[str] = Field(None, min_length=8, max_length=100)
     is_notify_enabled: Optional[bool] = None
-    daily_reminder_time: Optional[datetime] = None
     is_risk_alert_enabled: Optional[bool] = None
 
 class UserLogin(BaseModel):
@@ -72,7 +69,6 @@ class UserResponse(BaseModel):
     emergency_contact_relationship: Optional[str] = None
     emergency_contact_email: Optional[str] = None
     is_notify_enabled: bool
-    daily_reminder_time: Optional[datetime] = None
     is_risk_alert_enabled: bool
     
     model_config = ConfigDict(from_attributes=True)
@@ -90,7 +86,6 @@ class UserProfileResponse(BaseModel):
     full_name: str
     email: str
     is_notify_enabled: Optional[bool] = False
-    daily_reminder_time: Optional[datetime] = None
     is_risk_alert_enabled: Optional[bool] = False
     emergency_contact: Optional[EmergencyContactInfo] = None
 

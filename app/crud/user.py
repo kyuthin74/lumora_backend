@@ -22,7 +22,6 @@ def create_user(db: Session, user: UserCreate) -> User:
         full_name=user.full_name,
         hashed_password=hashed_password,
         is_notify_enabled=user.is_notify_enabled if user.is_notify_enabled is not None else False,
-        daily_reminder_time=user.daily_reminder_time,
         is_risk_alert_enabled=user.is_risk_alert_enabled if user.is_risk_alert_enabled is not None else False,
     )
     db.add(db_user)

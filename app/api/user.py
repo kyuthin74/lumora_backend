@@ -38,7 +38,6 @@ async def get_profile(
         full_name=user.full_name,
         email=user.email,
         is_notify_enabled=user.is_notify_enabled,
-        daily_reminder_time=user.daily_reminder_time,
         is_risk_alert_enabled=user.is_risk_alert_enabled,
         emergency_contact=emergency_contact_info
     )

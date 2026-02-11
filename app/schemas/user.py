@@ -31,7 +31,6 @@ class UserBase(BaseModel):
     email: EmailStr
     full_name: str = Field(..., min_length=1, max_length=100)
     is_notify_enabled: Optional[bool] = False
-    daily_reminder_time: Optional[datetime] = None
     is_risk_alert_enabled: Optional[bool] = False
 
 
@@ -52,7 +51,6 @@ class UserUpdate(BaseModel):
     email: Optional[EmailStr] = None
     password: Optional[str] = Field(None, min_length=8, max_length=100)
     is_notify_enabled: Optional[bool] = None
-    daily_reminder_time: Optional[datetime] = None
     is_risk_alert_enabled: Optional[bool] = None
 
 
@@ -77,7 +75,6 @@ class UserProfileResponse(BaseModel):
     full_name: str
     email: str
     is_notify_enabled: Optional[bool] = False
-    daily_reminder_time: Optional[datetime] = None
     is_risk_alert_enabled: Optional[bool] = False
     emergency_contact: Optional[EmergencyContactInfo] = None
 
