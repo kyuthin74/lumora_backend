@@ -1,18 +1,21 @@
-from pydantic import BaseModel
+from datetime import datetime
+from pydantic import BaseModel, Field, ConfigDict
 from typing import List, Optional
 
-class MoodCreate(BaseModel):
+
+class MoodBase(BaseModel):
     mood_type: str
-    activities: Optional[List[str]] = []
+    activities: List[str] = Field(default_factory=list)
     note: Optional[str] = None
 
-class MoodResponse(BaseModel):
+
+class MoodCreate(MoodBase):
+    pass
+
+
+class MoodResponse(MoodBase):
     mood_id: int
-    mood_type: str
-    activities: list[str]
-    note: str | None
-    created_at: str
+    user_id: int
+    created_at: datetime
 
-    class Config:
-        from_attributes = True
-
+    model_config = ConfigDict(from_attributes=True)

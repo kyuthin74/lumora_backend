@@ -1,10 +1,11 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Query
 from sqlalchemy.orm import Session
 from typing import List
-
+from datetime import datetime, date
 from app.database import get_db
 from app.schemas.mood import MoodCreate, MoodResponse
-from app.crud.mood import create_mood, get_user_moods
+from app.crud.mood import create_mood, get_user_moods, get_daily_moods
+from app.api.auth import get_current_user
 
 router = APIRouter(
     prefix="/moods",
@@ -22,6 +23,21 @@ def log_mood(
     Create a new mood journal entry for a user
     """
     return create_mood(db, user_id=user_id, mood=mood)
+
+
+@router.get("/daily", response_model=List[MoodResponse])
+def read_daily_moods(
+    selected_date: date = Query(..., description="Format: YYYY-MM-DD"),
+    db: Session = Depends(get_db),
+    current_user = Depends(get_current_user),
+):
+    moods = get_daily_moods(
+        db=db,
+        user_id=current_user.id,
+        selected_date=datetime.combine(selected_date, datetime.min.time())
+    )
+
+    return moods
 
 
 @router.get("/{user_id}", response_model=List[MoodResponse])
