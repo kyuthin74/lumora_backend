@@ -3,6 +3,7 @@ from sqlalchemy.orm import Session
 from typing import List
 
 from app.database import get_db
+from app.schemas.depression_risk_result import DepressionRiskResultResponse
 from app.schemas.depression_test import (
     DepressionTestCreate,
     DepressionTestResponse,
@@ -21,7 +22,7 @@ router = APIRouter(
 
 @router.post(
     "",
-    response_model=DepressionTestResponse,
+    response_model=DepressionRiskResultResponse,
     status_code=status.HTTP_201_CREATED,
 )
 def create_test(

@@ -19,6 +19,7 @@ class DepressionTestCreate(BaseModel):
     decision_making: Optional[str] = None
     bothered_things: Optional[str] = None
     stressful_events: Optional[str] = None
+    sleepy_tired: Optional[str] = None
     future_hope: Optional[str] = None
 
 
@@ -38,6 +39,7 @@ class DepressionTestResponse(BaseModel):
     decision_making: Optional[str]
     bothered_things: Optional[str]
     stressful_events: Optional[str]
+    sleepy_tired: Optional[str]
     future_hope: Optional[str]
     created_at: datetime
 
