@@ -14,8 +14,8 @@ from app.crud.depression_test import (
 )
 
 router = APIRouter(
-    prefix="/depression-tests",
-    tags=["Depression Tests"],
+    prefix="/depression-test",
+    tags=["Depression Test"],
 )
 
 
