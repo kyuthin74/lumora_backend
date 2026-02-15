@@ -1,6 +1,6 @@
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, Response
 from fastapi.openapi.utils import get_openapi
 from contextlib import asynccontextmanager
 import logging
@@ -106,6 +106,12 @@ async def root():
             "openapi": "/openapi.json"
         }
     }
+
+
+# Favicon endpoint to avoid 404s from browser requests
+@app.get("/favicon.ico", include_in_schema=False)
+async def favicon():
+    return Response(status_code=204, media_type="image/x-icon")
 
 
 # Health check endpoint
