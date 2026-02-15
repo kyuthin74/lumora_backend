@@ -22,6 +22,7 @@ class DepressionTest(Base):
     negative_thoughts = Column(String, nullable=True)
     decision_making = Column(String, nullable=True)
     bothered_things = Column(String, nullable=True)
+    sleepy_tired = Column(String, nullable=True)
     stressful_events = Column(String, nullable=True)
     future_hope = Column(String, nullable=True)
 
