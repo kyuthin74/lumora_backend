@@ -25,7 +25,6 @@ class DepressionTestCreate(BaseModel):
 class DepressionTestResponse(BaseModel):
     depression_test_id: int
     user_id: int
-
     mood: Optional[str]
     sleep_hour: Optional[str]
     appetite: Optional[str]
@@ -40,7 +39,6 @@ class DepressionTestResponse(BaseModel):
     bothered_things: Optional[str]
     stressful_events: Optional[str]
     future_hope: Optional[str]
-
     created_at: datetime
 
     class Config:

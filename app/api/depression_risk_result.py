@@ -36,7 +36,7 @@ def read_user_risk_results(user_id: int, db: Session = Depends(get_db)):
 
 
 @router.get(
-    "/user/{user_id}/latest",
+    "/{user_id}/latest",
     response_model=DepressionRiskResultResponse,
 )
 def read_latest_risk_result(user_id: int, db: Session = Depends(get_db)):
