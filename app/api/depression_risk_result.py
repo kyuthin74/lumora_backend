@@ -2,6 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from typing import List
 
+from app.api.auth import get_current_user
 from app.database import get_db
 from app.schemas.depression_risk_result import (
     DepressionRiskResultCreate,
@@ -9,9 +10,7 @@ from app.schemas.depression_risk_result import (
 )
 from app.crud.depression_risk_result import (
     create_risk_result,
-    get_risk_result_by_id,
     get_risk_results_by_user,
-    get_latest_risk_result_by_user,
 )
 from app.crud.depression_test import get_depression_test_by_id
 from app.services.prediction_service import prediction_service
@@ -29,8 +28,14 @@ router = APIRouter(
 )
 def create_depression_risk_result(
     result: DepressionRiskResultCreate,
+    current_user=Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
+    if current_user.id != result.user_id:
+        raise HTTPException(
+            status_code=403,
+            detail="You do not have permission to create a risk result for this user"
+        )
     return create_risk_result(
         db=db,
         user_id=result.user_id,
@@ -47,6 +52,7 @@ def create_depression_risk_result(
 )
 def predict_and_save_risk_result(
     depression_test_id: int,
+    current_user=Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
     """
@@ -65,6 +71,13 @@ def predict_and_save_risk_result(
         raise HTTPException(
             status_code=404,
             detail=f"Depression test with ID {depression_test_id} not found"
+        )
+    
+    # Check if current user has permission to access this test
+    if current_user.id != test.user_id:
+        raise HTTPException(
+            status_code=403,
+            detail="You do not have permission to access this depression test"
         )
     
     # Convert test data to dictionary for prediction
@@ -107,34 +120,26 @@ def predict_and_save_risk_result(
     return result
 
 
-@router.get(
-    "/{result_id}",
-    response_model=DepressionRiskResultResponse,
-)
-def read_risk_result(result_id: int, db: Session = Depends(get_db)):
-    result = get_risk_result_by_id(db, result_id)
-    if not result:
-        raise HTTPException(status_code=404, detail="Risk result not found")
-    return result
+# @router.get(
+#     "/{result_id}",
+#     response_model=DepressionRiskResultResponse,
+# )
+# def read_risk_result(result_id: int, db: Session = Depends(get_db)):
+#     result = get_risk_result_by_id(db, result_id)
+#     if not result:
+#         raise HTTPException(status_code=404, detail="Risk result not found")
+#     return result
 
 
 @router.get(
     "",
     response_model=List[DepressionRiskResultResponse],
 )
-def read_user_risk_results(user_id: int, db: Session = Depends(get_db)):
+def read_user_risk_results(user_id: int, current_user=Depends(get_current_user), db: Session = Depends(get_db)):
+    if current_user.id != user_id:
+        raise HTTPException(
+            status_code=403,
+            detail="You do not have permission to access risk results for this user"
+        )
     return get_risk_results_by_user(db, user_id)
 
-
-@router.get(
-    "/{user_id}/latest",
-    response_model=DepressionRiskResultResponse,
-)
-def read_latest_risk_result(user_id: int, db: Session = Depends(get_db)):
-    result = get_latest_risk_result_by_user(db, user_id)
-    if not result:
-        raise HTTPException(
-            status_code=404,
-            detail="No risk results found for this user",
-        )
-    return result
