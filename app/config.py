@@ -10,6 +10,7 @@ class Settings(BaseSettings):
     APP_NAME: str = "Lumora Mental Health API"
     APP_VERSION: str = "1.0.0"
     DEBUG: bool = True
+    TIMEZONE: str = "UTC"
     
     # Database
     DATABASE_URL: str

@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, Query
 from sqlalchemy.orm import Session
 from typing import List, Dict
-from datetime import datetime, date
+from datetime import datetime, date, timezone
 from app.database import get_db
 from app.schemas.mood import MoodCreate, MoodResponse
 from app.crud.mood import create_mood, get_user_moods, get_daily_moods, delete_daily_moods
@@ -34,7 +34,7 @@ def read_daily_moods(
     moods = get_daily_moods(
         db=db,
         user_id=current_user.id,
-        selected_date=datetime.combine(selected_date, datetime.min.time())
+        selected_date=datetime.combine(selected_date, datetime.min.time(), tzinfo=timezone.utc)
     )
 
     return moods
@@ -54,7 +54,7 @@ def delete_daily_moods_endpoint(
         db=db,
         user_id=current_user.id,
         mood_id=mood_id,
-        selected_date=datetime.combine(selected_date, datetime.min.time())
+        selected_date=datetime.combine(selected_date, datetime.min.time(), tzinfo=timezone.utc)
     )
     return {"deleted": deleted_count}
 
