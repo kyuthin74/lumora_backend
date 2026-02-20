@@ -31,3 +31,22 @@ def get_daily_moods(db: Session, user_id: int, selected_date: datetime):
         MoodJournaling.created_at >= start_date,
         MoodJournaling.created_at <= end_date
     ).all()
+
+
+def delete_daily_moods(db: Session, user_id: int, mood_id: int, selected_date: datetime) -> int:
+    start_date = selected_date.replace(hour=0, minute=0, second=0)
+    end_date = selected_date.replace(hour=23, minute=59, second=59)
+
+    entry = db.query(MoodJournaling).filter(
+        MoodJournaling.mood_id == mood_id,
+        MoodJournaling.user_id == user_id,
+        MoodJournaling.created_at >= start_date,
+        MoodJournaling.created_at <= end_date
+    ).first()
+
+    if not entry:
+        return 0
+
+    db.delete(entry)
+    db.commit()
+    return 1
