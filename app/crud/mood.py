@@ -1,11 +1,18 @@
 from sqlalchemy.orm import Session
-from datetime import datetime
+from datetime import datetime, timezone
 from app.models.mood import MoodJournaling
 from app.schemas.mood import MoodCreate
 
+
+def _as_utc(dt: datetime) -> datetime:
+    """Ensure datetime is timezone-aware in UTC."""
+    if dt.tzinfo is None:
+        return dt.replace(tzinfo=timezone.utc)
+    return dt.astimezone(timezone.utc)
+
 def create_mood(db: Session, user_id: int, mood: MoodCreate):
     new_mood = MoodJournaling(
-        created_at=datetime.utcnow(),
+        created_at=datetime.now(timezone.utc),
         user_id=user_id,
         mood_type=mood.mood_type,
         activities=mood.activities,
@@ -23,8 +30,9 @@ def get_user_moods(db: Session, user_id: int):
         .all()
 
 def get_daily_moods(db: Session, user_id: int, selected_date: datetime):
-    start_date = selected_date.replace(hour=0, minute=0, second=0)
-    end_date = selected_date.replace(hour=23, minute=59, second=59)
+    selected_date = _as_utc(selected_date)
+    start_date = selected_date.replace(hour=0, minute=0, second=0, microsecond=0)
+    end_date = selected_date.replace(hour=23, minute=59, second=59, microsecond=999999)
 
     return db.query(MoodJournaling).filter(
         MoodJournaling.user_id == user_id,
@@ -34,8 +42,9 @@ def get_daily_moods(db: Session, user_id: int, selected_date: datetime):
 
 
 def delete_daily_moods(db: Session, user_id: int, mood_id: int, selected_date: datetime) -> int:
-    start_date = selected_date.replace(hour=0, minute=0, second=0)
-    end_date = selected_date.replace(hour=23, minute=59, second=59)
+    selected_date = _as_utc(selected_date)
+    start_date = selected_date.replace(hour=0, minute=0, second=0, microsecond=0)
+    end_date = selected_date.replace(hour=23, minute=59, second=59, microsecond=999999)
 
     entry = db.query(MoodJournaling).filter(
         MoodJournaling.mood_id == mood_id,
