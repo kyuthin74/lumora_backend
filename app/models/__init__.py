@@ -4,6 +4,7 @@ from .user import User
 from .emergency_contact import EmergencyContact
 from .depression_test import DepressionTest
 from .depression_risk_result import DepressionRiskResult
+from .notification import Notification
 
 
 __all__ = [
