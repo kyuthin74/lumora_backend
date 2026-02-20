@@ -12,6 +12,7 @@ from app.schemas.depression_risk_result import (
 from app.crud.depression_risk_result import (
     create_risk_result,
     get_weekly_risk_scores,
+    get_latest_risk_result_by_user,
 )
 from app.crud.depression_test import get_depression_test_by_id
 from app.services.prediction_service import prediction_service
@@ -21,28 +22,28 @@ router = APIRouter(
     tags=["Depression Risk Results"],
 )
 
-@router.post(
-    "",
-    response_model=DepressionRiskResultResponse,
-    status_code=201,
-)
-def create_depression_risk_result(
-    result: DepressionRiskResultCreate,
-    current_user=Depends(get_current_user),
-    db: Session = Depends(get_db),
-):
-    if current_user.id != result.user_id:
-        raise HTTPException(
-            status_code=403,
-            detail="You do not have permission to create a risk result for this user"
-        )
-    return create_risk_result(
-        db=db,
-        user_id=result.user_id,
-        depression_test_id=result.depression_test_id,
-        risk_level=result.risk_level,
-        risk_score=result.risk_score,
-    )
+# @router.post(
+#     "",
+#     response_model=DepressionRiskResultResponse,
+#     status_code=201,
+# )
+# def create_depression_risk_result(
+#     result: DepressionRiskResultCreate,
+#     current_user=Depends(get_current_user),
+#     db: Session = Depends(get_db),
+# ):
+#     if current_user.id != result.user_id:
+#         raise HTTPException(
+#             status_code=403,
+#             detail="You do not have permission to create a risk result for this user"
+#         )
+#     return create_risk_result(
+#         db=db,
+#         user_id=result.user_id,
+#         depression_test_id=result.depression_test_id,
+#         risk_level=result.risk_level,
+#         risk_score=result.risk_score,
+#     )
 
 @router.post(
     "/predict/{depression_test_id}",
@@ -117,6 +118,45 @@ def predict_and_save_risk_result(
     )
     
     return result
+
+
+@router.get(
+    "/{user_id}/latest",
+    response_model=DepressionRiskResultResponse,
+)
+def get_latest_risk_result(
+    user_id: int,
+    current_user=Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """
+    Retrieve the most recent depression risk assessment result for a specific user.
+    
+    Args:
+        user_id: ID of the user
+        current_user: Current authenticated user
+        db: Database session
+        
+    Returns:
+        The most recent depression risk result
+    """
+    # Check if current user has permission to access this data
+    if current_user.id != user_id:
+        raise HTTPException(
+            status_code=403,
+            detail="You do not have permission to access risk results for this user"
+        )
+    
+    # Get the latest risk result
+    latest_result = get_latest_risk_result_by_user(db, user_id)
+    
+    if not latest_result:
+        raise HTTPException(
+            status_code=404,
+            detail=f"No depression risk results found for user {user_id}"
+        )
+    
+    return latest_result
 
 
 @router.get(
