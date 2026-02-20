@@ -80,13 +80,10 @@ class PredictionService:
         
         # Check if model expects additional features not in database
         # and set defaults for them
-        print("processed data after encoding:", processed_data)
         for feature_name in self.encoders.keys():
             if feature_name not in processed_data:
                 print(f"Warning: Feature {feature_name} not found in test data, using default=0")
                 processed_data[feature_name] = 0
-        
-        print("encode :", self.encoders.keys())
         
         # Define feature order (must match training order)
         # Get feature order from encoders or use the standard order
@@ -116,14 +113,13 @@ class PredictionService:
         """
         # Preprocess the input
         X_processed = self.preprocess_depression_test(test_data)
-        print(f"Preprocessed data for prediction: {X_processed}")
         # Make prediction (probability of positive class)
         risk_score = float(self.model.predict_proba(X_processed)[:, 1][0])
         
         # Determine risk level based on score
-        if risk_score < 0.4:
+        if risk_score <= 0.3:
             risk_level = "Low"
-        elif risk_score < 0.7:
+        elif risk_score <= 0.65:
             risk_level = "Medium"
         else:
             risk_level = "High"
