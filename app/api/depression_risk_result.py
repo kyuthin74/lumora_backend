@@ -7,10 +7,11 @@ from app.database import get_db
 from app.schemas.depression_risk_result import (
     DepressionRiskResultCreate,
     DepressionRiskResultResponse,
+    WeeklyRiskScoresResponse,
 )
 from app.crud.depression_risk_result import (
     create_risk_result,
-    get_risk_results_by_user,
+    get_weekly_risk_scores,
 )
 from app.crud.depression_test import get_depression_test_by_id
 from app.services.prediction_service import prediction_service
@@ -19,7 +20,6 @@ router = APIRouter(
     prefix="/depression-risk-results",
     tags=["Depression Risk Results"],
 )
-
 
 @router.post(
     "",
@@ -43,7 +43,6 @@ def create_depression_risk_result(
         risk_level=result.risk_level,
         risk_score=result.risk_score,
     )
-
 
 @router.post(
     "/predict/{depression_test_id}",
@@ -120,26 +119,43 @@ def predict_and_save_risk_result(
     return result
 
 
-# @router.get(
-#     "/{result_id}",
-#     response_model=DepressionRiskResultResponse,
-# )
-# def read_risk_result(result_id: int, db: Session = Depends(get_db)):
-#     result = get_risk_result_by_id(db, result_id)
-#     if not result:
-#         raise HTTPException(status_code=404, detail="Risk result not found")
-#     return result
-
-
 @router.get(
-    "",
-    response_model=List[DepressionRiskResultResponse],
+    "/{user_id}/weekly",
+    response_model=WeeklyRiskScoresResponse,
 )
-def read_user_risk_results(user_id: int, current_user=Depends(get_current_user), db: Session = Depends(get_db)):
+def get_weekly_risk_scores_endpoint(
+    user_id: int,
+    current_user=Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """
+    Get weekly aggregated depression risk scores for a user.
+    
+    Returns risk scores grouped by week with daily breakdowns.
+    Each week shows Monday-Sunday data with average risk calculation.
+    
+    Args:
+        user_id: ID of the user
+        current_user: Current authenticated user
+        db: Database session
+        
+    Returns:
+        Weekly risk scores with daily breakdowns
+    """
+    # Check if current user has permission to access this data
     if current_user.id != user_id:
         raise HTTPException(
             status_code=403,
-            detail="You do not have permission to access risk results for this user"
+            detail="You do not have permission to access risk scores for this user"
         )
-    return get_risk_results_by_user(db, user_id)
+    
+    # Get weekly aggregated data
+    weekly_data = get_weekly_risk_scores(db, user_id)
+    
+    return {
+        "user_id": str(user_id),
+        "weeks": weekly_data
+    }
+
+
 
