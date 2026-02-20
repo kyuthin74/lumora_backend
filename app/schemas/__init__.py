@@ -41,14 +41,7 @@ from app.schemas.depression_risk_result import (
     DepressionRiskResultResponse,
 )
 
-# ---------- Charts ----------
-from app.models.chart import (
-    ChartDataPoint,
-    MoodChartData,
-    ActivityChartData,
-    RiskChartData,
-    ComprehensiveChartData,
-)
+
 
 # ---------- Chatbot ----------
 from app.models.chatbot import (
