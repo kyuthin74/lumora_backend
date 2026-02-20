@@ -22,3 +22,5 @@ class DepressionRiskResult(Base):
     # Relationships
     user = relationship("User", back_populates="depression_risk_results")
     depression_test = relationship("DepressionTest", back_populates="depression_risk_results")
+
+
