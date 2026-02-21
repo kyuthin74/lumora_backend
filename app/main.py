@@ -6,7 +6,7 @@ from contextlib import asynccontextmanager
 import logging
 
 from app.config import settings
-from app.api import auth, user, mood, chatbot, emergency_contact, depression_test, depression_risk_result, notification
+from app.api import auth, user, mood, chatbot, emergency_contact, depression_test, depression_risk_result, notification, email
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -89,6 +89,7 @@ app.include_router(chatbot.router)
 app.include_router(depression_test.router)
 app.include_router(depression_risk_result.router)
 app.include_router(notification.router)
+app.include_router(email.router)
 
 
 # Root endpoint

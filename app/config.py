@@ -26,11 +26,11 @@ class Settings(BaseSettings):
     ENCODERS_PATH: str = "saved_models/label_encoders.pkl"
     
     # Email Configuration
-    SMTP_HOST: str = "smtp.gmail.com"
+    SMTP_HOST: str = "smtp-relay.brevo.com"
     SMTP_PORT: int = 587
-    SMTP_USER: Optional[str] = None
-    SMTP_PASSWORD: Optional[str] = None
-    SMTP_FROM_EMAIL: Optional[str] = None
+    SMTP_USER: Optional[str] = "a2f9bf001@smtp-brevo.com"
+    SMTP_PASSWORD: Optional[str] = None  # Loaded from .env
+    SMTP_FROM_EMAIL: Optional[str] = "lumorauserservice@gmail.com"
     SMTP_FROM_NAME: str = "Lumora Mental Health"
     
     # Alert Thresholds
