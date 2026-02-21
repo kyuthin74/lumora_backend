@@ -29,7 +29,7 @@ class Settings(BaseSettings):
     SMTP_HOST: str = "smtp-relay.brevo.com"
     SMTP_PORT: int = 587
     SMTP_USER: Optional[str] = "a2f9bf001@smtp-brevo.com"
-    SMTP_PASSWORD: Optional[str] = "xsmtpsib-262d74334f900957ecda15f25d17c38ba58e511b5723e1f0a9375206e119c337-6vMjZhhnGgeFEvEL"
+    SMTP_PASSWORD: Optional[str] = None  # Loaded from .env
     SMTP_FROM_EMAIL: Optional[str] = "lumorauserservice@gmail.com"
     SMTP_FROM_NAME: str = "Lumora Mental Health"
     
