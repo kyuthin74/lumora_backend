@@ -166,3 +166,40 @@ def get_weekly_risk_scores(db: Session, user_id: int) -> List[Dict]:
     
     return weekly_scores
 
+
+def get_daily_risk_results(db: Session, user_id: int, days: int = 7) -> List[Dict]:
+    """
+    Get risk results for the last N days for a user.
+    
+    Args:
+        db: Database session
+        user_id: ID of the user
+        days: Number of days to retrieve (default: 7)
+    
+    Returns:
+        List of daily risk results with date, risk_level, and risk_score
+    """
+    # Calculate the date threshold
+    cutoff_date = datetime.now() - timedelta(days=days)
+    
+    # Query risk results from the last N days
+    risk_results = (
+        db.query(DepressionRiskResult)
+        .filter(
+            DepressionRiskResult.user_id == user_id,
+            DepressionRiskResult.created_at >= cutoff_date
+        )
+        .order_by(DepressionRiskResult.created_at.desc())
+        .all()
+    )
+    
+    # Format results
+    daily_results = []
+    for result in risk_results:
+        daily_results.append({
+            'date': result.created_at.date().isoformat(),
+            'risk_level': result.risk_level,
+            'risk_score': result.risk_score
+        })
+    
+    return daily_results
