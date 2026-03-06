@@ -8,11 +8,13 @@ from app.schemas.depression_risk_result import (
     DepressionRiskResultCreate,
     DepressionRiskResultResponse,
     WeeklyRiskScoresResponse,
+    DailyRiskResultsResponse,
 )
 from app.crud.depression_risk_result import (
     create_risk_result,
     get_weekly_risk_scores,
     get_latest_risk_result_by_user,
+    get_daily_risk_results,
 )
 from app.crud.depression_test import get_depression_test_by_id
 from app.services.prediction_service import prediction_service
@@ -198,4 +200,38 @@ def get_weekly_risk_scores_endpoint(
     }
 
 
-
+@router.get(
+    "/{user_id}/daily",
+    response_model=DailyRiskResultsResponse,
+)
+def get_daily_risk_results_endpoint(
+    user_id: int,
+    days: int = 7,
+    current_user=Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """
+    Get daily depression risk results for the last N days.
+    
+    Args:
+        user_id: ID of the user
+        days: Number of days to retrieve (default: 7)
+        current_user: Current authenticated user
+        db: Database session
+        
+    Returns:
+        List of daily risk results with date, risk_level, and risk_score
+    """
+    # Check if current user has permission to access this data
+    if current_user.id != user_id:
+        raise HTTPException(
+            status_code=403,
+            detail="You do not have permission to access risk results for this user"
+        )
+    
+    # Get daily risk results
+    daily_results = get_daily_risk_results(db, user_id, days)
+    
+    return {
+        "results": daily_results
+    }

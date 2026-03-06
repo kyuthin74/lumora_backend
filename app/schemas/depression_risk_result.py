@@ -44,3 +44,21 @@ class WeeklyRiskScoresResponse(BaseModel):
     """Schema for weekly risk scores response"""
     user_id: str = Field(..., description="ID of the user")
     weeks: List[WeeklyRiskScore] = Field(..., description="List of weekly risk scores")
+
+
+class DailyRiskResultItem(BaseModel):
+    """Schema for daily risk result item"""
+    date: str = Field(..., description="Date of the risk result (YYYY-MM-DD)")
+    risk_level: str = Field(..., description="Risk level: Low, Medium, or High")
+    risk_score: float = Field(..., description="Risk score between 0.0 and 1.0")
+
+
+class DailyRiskResultsResponse(BaseModel):
+    """Schema for daily risk results response"""
+    results: List[DailyRiskResultItem] = Field(..., description="List of daily risk results")
+
+
+class EmergencyAlertRequest(BaseModel):
+    """Schema for emergency alert request"""
+    user_id: int = Field(..., description="ID of the user")
+    alert_type: str = Field(..., description="Type of alert being sent")

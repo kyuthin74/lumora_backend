@@ -32,20 +32,65 @@ def send_forgot_password_email(to_email: str, code: str):
         """
         _send_email(to_email, subject, body, html=True)
 
-def send_emergency_contact_alert(to_email: str, user_name: str, risk_level: str):
-    subject = f"Emergency Alert: {user_name} at {risk_level} Risk"
+def send_emergency_contact_alert(to_email: str, user_name: str, risk_level: str, contact_name: str = None):
+    subject = f"Urgent: High Risk Wellbeing Alert for {user_name}"
+    greeting = contact_name if contact_name else "Emergency Contact"
     body = f"""
-    Dear Emergency Contact,
-
-    This is an automated alert from {settings.SMTP_FROM_NAME}.
-    {user_name} has been assessed as {risk_level} risk for 7 days.
-
-    Please check in with them as soon as possible.
-
-    Best regards,
-    {settings.SMTP_FROM_NAME}
+    <html>
+    <body style="font-family: Arial, sans-serif; background: #f4f4f4; padding: 20px;">
+        <div style="max-width: 600px; margin: 0 auto; background: #fff; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); overflow: hidden;">
+            <div style="background: #d32f2f; color: #fff; padding: 24px; text-align: center;">
+                <h2 style="margin: 0; font-size: 20px;">⚠️ Urgent Wellbeing Alert</h2>
+            </div>
+            <div style="padding: 32px 24px;">
+                <p style="font-size: 16px; color: #333; margin-bottom: 20px;">Dear {greeting},</p>
+                
+                <p style="font-size: 15px; color: #333; line-height: 1.6;">
+                    This message is being sent to inform you of a wellbeing alert concerning <strong>{user_name}</strong>.
+                </p>
+                
+                <div style="background: #ffebee; border-left: 4px solid #d32f2f; padding: 16px; margin: 24px 0; border-radius: 4px;">
+                    <p style="font-size: 15px; color: #333; margin: 0; line-height: 1.6;">
+                        Based on recent assessment results in the {settings.SMTP_FROM_NAME} monitoring system, <strong>{user_name}</strong> has been identified as being at a <strong>high risk level</strong> over the past seven days.
+                    </p>
+                </div>
+                
+                <div style="background: #fff3e0; border-left: 4px solid #ff9800; padding: 16px; margin: 24px 0; border-radius: 4px;">
+                    <p style="font-size: 15px; color: #333; margin: 0 0 12px 0; font-weight: bold;">
+                        Recommended Action:
+                    </p>
+                    <p style="font-size: 15px; color: #333; margin: 0; line-height: 1.6;">
+                        We recommend that you check in with them as soon as possible to ensure their safety and wellbeing.
+                    </p>
+                </div>
+                
+                <p style="font-size: 15px; color: #333; line-height: 1.6;">
+                    Your support and prompt attention may be very important at this time. Please consider contacting them directly or reaching out to appropriate support services if you believe additional assistance is required.
+                </p>
+                
+                <p style="font-size: 15px; color: #333; line-height: 1.6;">
+                    If you have any questions regarding this alert, please contact our support team.
+                </p>
+                
+                <p style="font-size: 15px; color: #333; margin-top: 32px;">
+                    Thank you for your understanding and cooperation.
+                </p>
+                
+                <p style="font-size: 15px; color: #333; margin-top: 32px;">
+                    Sincerely,<br>
+                    <strong>{settings.SMTP_FROM_NAME} Support Team</strong>
+                </p>
+            </div>
+            <div style="background: #f5f5f5; padding: 16px 24px; text-align: center; border-top: 1px solid #e0e0e0;">
+                <p style="font-size: 13px; color: #666; margin: 0;">
+                    This is an automated alert message for emergency contacts.
+                </p>
+            </div>
+        </div>
+    </body>
+    </html>
     """
-    _send_email(to_email, subject, body)
+    _send_email(to_email, subject, body, html=True)
 
 
 def _send_email(to_email: str, subject: str, body: str, html: bool = False):
