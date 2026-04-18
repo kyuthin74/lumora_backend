@@ -11,6 +11,12 @@ class Settings(BaseSettings):
     APP_VERSION: str = "1.0.0"
     DEBUG: bool = True
     TIMEZONE: str = "UTC"
+
+    # Push Notification Reminder
+    PUSH_REMINDER_ENABLED: bool = True
+    PUSH_REMINDER_HOUR: int = 16
+    PUSH_REMINDER_MINUTE: int = 0
+    FIREBASE_CREDENTIALS_PATH: Optional[str] = None
     
     # Database
     DATABASE_URL: str

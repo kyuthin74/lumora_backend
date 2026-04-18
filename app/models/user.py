@@ -1,7 +1,7 @@
 from pydantic import BaseModel, Field, ConfigDict
 from typing import Optional
 from datetime import datetime
-from sqlalchemy import Column, Integer, String, Boolean, DateTime, ForeignKey
+from sqlalchemy import Column, Integer, String, Boolean, DateTime, Date, ForeignKey
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 from app.database import Base
@@ -15,6 +15,9 @@ class User(Base):
     hashed_password = Column(String(255), nullable=False)
     is_notify_enabled = Column(Boolean, nullable=False, server_default="false")
     is_risk_alert_enabled = Column(Boolean, nullable=False, server_default="false")
+    is_push_reminder_enabled = Column(Boolean, nullable=False, server_default="true")
+    fcm_token = Column(String(512), nullable=True)
+    last_push_reminder_date = Column(Date, nullable=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
     # Relationships
@@ -46,6 +49,7 @@ class UserCreate(BaseModel):
     password: str = Field(..., min_length=8, max_length=100)
     is_notify_enabled: Optional[bool] = False
     is_risk_alert_enabled: Optional[bool] = False
+    is_push_reminder_enabled: Optional[bool] = True
 
 class UserUpdate(BaseModel):
     """Schema for updating user profile"""
@@ -54,6 +58,7 @@ class UserUpdate(BaseModel):
     password: Optional[str] = Field(None, min_length=8, max_length=100)
     is_notify_enabled: Optional[bool] = None
     is_risk_alert_enabled: Optional[bool] = None
+    is_push_reminder_enabled: Optional[bool] = None
 
 class UserLogin(BaseModel):
     """Schema for user login"""
@@ -71,6 +76,7 @@ class UserResponse(BaseModel):
     emergency_contact_email: Optional[str] = None
     is_notify_enabled: bool
     is_risk_alert_enabled: bool
+    is_push_reminder_enabled: bool
     
     model_config = ConfigDict(from_attributes=True)
 
