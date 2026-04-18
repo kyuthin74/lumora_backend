@@ -23,6 +23,7 @@ def create_user(db: Session, user: UserCreate) -> User:
         hashed_password=hashed_password,
         is_notify_enabled=user.is_notify_enabled if user.is_notify_enabled is not None else False,
         is_risk_alert_enabled=user.is_risk_alert_enabled if user.is_risk_alert_enabled is not None else False,
+        is_push_reminder_enabled=user.is_push_reminder_enabled if user.is_push_reminder_enabled is not None else True,
     )
     db.add(db_user)
     db.commit()

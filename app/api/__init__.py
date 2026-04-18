@@ -9,6 +9,7 @@ from app.api import chatbot
 from app.api import depression_test
 from app.api import depression_risk_result
 from app.api import email
+from app.api import push_notification
 
 
 __all__ = [
@@ -18,5 +19,6 @@ __all__ = [
     "chatbot",
     "depression_test",
     "depression_risk_result",
-    "email"
+    "email",
+    "push_notification",
 ]

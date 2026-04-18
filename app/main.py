@@ -6,7 +6,8 @@ from contextlib import asynccontextmanager
 import logging
 
 from app.config import settings
-from app.api import auth, user, mood, chatbot, emergency_contact, depression_test, depression_risk_result, notification, email, emergency_alert
+from app.api import auth, user, mood, chatbot, emergency_contact, depression_test, depression_risk_result, notification, email, emergency_alert, push_notification
+from app.services.push_reminder_scheduler import start_push_reminder_scheduler, stop_push_reminder_scheduler
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -18,10 +19,12 @@ async def lifespan(app: FastAPI):
     """Startup and shutdown events"""
     # Startup
     logger.info("Starting Lumora Mental Health API...")
+    start_push_reminder_scheduler()
     
     yield
     
     # Shutdown
+    stop_push_reminder_scheduler()
     logger.info("Shutting down Lumora Mental Health API...")
 
 
@@ -90,6 +93,7 @@ app.include_router(chatbot.router)
 app.include_router(depression_test.router)
 app.include_router(depression_risk_result.router)
 app.include_router(notification.router)
+app.include_router(push_notification.router)
 app.include_router(email.router)
 
 

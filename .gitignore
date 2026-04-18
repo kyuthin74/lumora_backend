@@ -29,6 +29,7 @@ ENV/
 # Environment Variables
 .env
 .env.local
+firebase-service-account.json
 
 # Database
 *.db
