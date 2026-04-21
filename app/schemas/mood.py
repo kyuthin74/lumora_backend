@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import date, datetime
 from pydantic import BaseModel, Field, ConfigDict
 from typing import List, Optional
 from app.config import settings
@@ -11,7 +11,8 @@ class MoodBase(BaseModel):
 
 
 class MoodCreate(MoodBase):
-    pass
+    selected_date: Optional[date] = None
+    created_at: Optional[datetime] = None
 
 
 class MoodResponse(MoodBase):
