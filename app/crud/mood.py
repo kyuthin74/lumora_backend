@@ -11,8 +11,15 @@ def _as_utc(dt: datetime) -> datetime:
     return dt.astimezone(timezone.utc)
 
 def create_mood(db: Session, user_id: int, mood: MoodCreate):
+    if mood.created_at is not None:
+        created_at = _as_utc(mood.created_at)
+    elif mood.selected_date is not None:
+        created_at = datetime.combine(mood.selected_date, datetime.min.time(), tzinfo=timezone.utc)
+    else:
+        created_at = datetime.now(timezone.utc)
+
     new_mood = MoodJournaling(
-        created_at=datetime.now(timezone.utc),
+        created_at=created_at,
         user_id=user_id,
         mood_type=mood.mood_type,
         activities=mood.activities,
