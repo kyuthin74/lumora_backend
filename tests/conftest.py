@@ -5,6 +5,9 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from app.database import Base, get_db
 from app.main import app
+from app.utils.security import create_access_token
+from app.models.user import User
+from datetime import datetime
 
 # Create test database
 TEST_DATABASE_URL = "sqlite:///./test.db"
@@ -38,3 +41,28 @@ def client(db_session):
     with TestClient(app) as test_client:
         yield test_client
     app.dependency_overrides.clear()
+
+
+@pytest.fixture(scope="function")
+def test_user(db_session):
+    """Create a test user"""
+    from app.utils.security import get_password_hash
+    user = User(
+        email="testuser@example.com",
+        full_name="Test User",
+        hashed_password=get_password_hash("testpassword123"),
+        is_notify_enabled=False,
+        is_risk_alert_enabled=False,
+        created_at=datetime.utcnow()
+    )
+    db_session.add(user)
+    db_session.commit()
+    db_session.refresh(user)
+    return user
+
+
+@pytest.fixture(scope="function")
+def auth_token(test_user):
+    """Create an auth token for test user"""
+    return create_access_token(data={"sub": str(test_user.id)})
+

@@ -31,3 +31,26 @@ class ConversationContext(BaseModel):
     recent_risk_score: Optional[float] = None
     total_entries: int = 0
     average_mood: Optional[float] = None
+
+
+class FrontendChatBootstrapResponse(BaseModel):
+    """Initial chatbot payload for frontend chat screen."""
+    session_id: str
+    welcome_message: str
+    suggestions: List[str]
+    context_summary: Optional[dict] = None
+
+
+class FrontendChatMessageRequest(BaseModel):
+    """Frontend message payload."""
+    message: str = Field(..., min_length=1, max_length=2000)
+    session_id: Optional[str] = None
+    conversation_history: Optional[List[ChatMessage]] = None
+
+
+class FrontendChatMessageResponse(BaseModel):
+    """Frontend structured message response."""
+    session_id: str
+    user_message: ChatMessage
+    assistant_message: ChatMessage
+    suggestions: List[str] = []

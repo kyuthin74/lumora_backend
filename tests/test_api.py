@@ -132,5 +132,127 @@ def test_unauthorized_access():
     assert response.status_code == 401
 
 
+# WebSocket Tests
+def test_websocket_connection_without_token(client):
+    """Test WebSocket connection fails without auth token"""
+    with pytest.raises(Exception):  # Connection should fail
+        with client.websocket_connect("/chatbot/ws") as websocket:
+            pass
+
+
+def test_websocket_connection_with_invalid_token(client):
+    """Test WebSocket connection fails with invalid token"""
+    with pytest.raises(Exception):  # Connection should fail
+        with client.websocket_connect("/chatbot/ws?token=invalid_token") as websocket:
+            pass
+
+
+def test_websocket_connection_with_valid_token(client, test_user, auth_token, db_session):
+    """Test WebSocket connection succeeds with valid token"""
+    # Override get_db for this test
+    from app.database import get_db
+    def override_get_db():
+        try:
+            yield db_session
+        finally:
+            pass
+    
+    app.dependency_overrides[get_db] = override_get_db
+    
+    try:
+        with client.websocket_connect(f"/chatbot/ws?token={auth_token}") as websocket:
+            # Should receive welcome message
+            data = websocket.receive_json()
+            assert data["type"] == "welcome"
+            assert "assistant" in data["content"].lower() or "lumora" in data["content"].lower()
+    finally:
+        app.dependency_overrides.clear()
+
+
+def test_websocket_send_message(client, test_user, auth_token, db_session):
+    """Test sending message through WebSocket"""
+    from app.database import get_db
+    def override_get_db():
+        try:
+            yield db_session
+        finally:
+            pass
+    
+    app.dependency_overrides[get_db] = override_get_db
+    
+    try:
+        with client.websocket_connect(f"/chatbot/ws?token={auth_token}") as websocket:
+            # Receive welcome message
+            welcome = websocket.receive_json()
+            assert welcome["type"] == "welcome"
+            
+            # Send a message
+            websocket.send_json({
+                "type": "message",
+                "content": "Hello, how are you?"
+            })
+            
+            # Receive response (could be from Gemini or error if API key not set)
+            response = websocket.receive_json()
+            assert response["type"] in ["message", "error"]
+            if response["type"] == "message":
+                assert "content" in response
+    finally:
+        app.dependency_overrides.clear()
+
+
+def test_websocket_empty_message(client, test_user, auth_token, db_session):
+    """Test sending empty message through WebSocket"""
+    from app.database import get_db
+    def override_get_db():
+        try:
+            yield db_session
+        finally:
+            pass
+    
+    app.dependency_overrides[get_db] = override_get_db
+    
+    try:
+        with client.websocket_connect(f"/chatbot/ws?token={auth_token}") as websocket:
+            # Receive welcome message
+            websocket.receive_json()
+            
+            # Send empty message
+            websocket.send_json({
+                "type": "message",
+                "content": ""
+            })
+            
+            # Should receive error
+            response = websocket.receive_json()
+            assert response["type"] == "error"
+    finally:
+        app.dependency_overrides.clear()
+
+def test_concurrent_websocket_connections(client, test_user, auth_token, db_session):
+    """Test that only one WebSocket connection per user is allowed"""
+    from app.database import get_db
+    
+    def override_get_db():
+        try:
+            yield db_session
+        finally:
+            pass
+    
+    app.dependency_overrides[get_db] = override_get_db
+    
+    try:
+        # First connection should succeed
+        with client.websocket_connect(f"/chatbot/ws?token={auth_token}") as websocket1:
+            websocket1.receive_json()  # welcome message
+            
+            # Second connection should fail (same user)
+            with pytest.raises(Exception):
+                with client.websocket_connect(f"/chatbot/ws?token={auth_token}") as websocket2:
+                    pass
+    finally:
+        app.dependency_overrides.clear()
+
+
 if __name__ == "__main__":
     pytest.main([__file__, "-v"])

@@ -27,6 +27,7 @@ class User(Base):
     emergency_contact = relationship("EmergencyContact", back_populates="user", uselist=False, cascade="all, delete-orphan")
     depression_tests = relationship("DepressionTest", back_populates="user", cascade="all, delete-orphan")
     notifications = relationship("Notification", back_populates="user", cascade="all, delete-orphan")
+    chat_history = relationship("ChatHistory", back_populates="user", uselist=False, cascade="all, delete-orphan")
     
     
 
