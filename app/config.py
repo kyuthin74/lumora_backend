@@ -49,6 +49,10 @@ class Settings(BaseSettings):
     CHATBOT_MAX_TOKENS: int = 500
     CHATBOT_TEMPERATURE: float = 0.7
     
+    # Gemini AI Configuration
+    GEMINI_API_KEY: Optional[str] = None
+    GEMINI_MODEL: str = "gemini-3.1-flash-lite-preview"
+    
     # CORS
     CORS_ORIGINS: list = [
         "http://localhost:3000",

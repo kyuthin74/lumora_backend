@@ -5,6 +5,7 @@ from .emergency_contact import EmergencyContact
 from .depression_test import DepressionTest
 from .depression_risk_result import DepressionRiskResult
 from .notification import Notification
+from .chat_history import ChatHistory
 
 
 __all__ = [
@@ -18,7 +19,9 @@ __all__ = [
     # Charts
     "ChartDataPoint", "MoodChartData", "ActivityChartData", "RiskChartData", "ComprehensiveChartData",
     # Chatbot
-    "ChatMessage", "ChatRequest", "ChatResponse", "ConversationContext"
+    "ChatMessage", "ChatRequest", "ChatResponse", "ConversationContext",
+    # Chat History
+    "ChatHistory",
 
     # Depression Test
     "DepressionTestCreate", "DepressionTestResponse",

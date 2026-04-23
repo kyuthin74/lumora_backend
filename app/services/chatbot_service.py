@@ -1,39 +1,24 @@
-from typing import List, Optional
+from typing import List, Optional, Dict, Any
 from app.models.chatbot import ChatMessage, ChatResponse, ConversationContext
 from app.config import settings
 from datetime import datetime
 import logging
+from google import genai
+from google.genai import types
 
 logger = logging.getLogger(__name__)
 
-# Try to import OpenAI, but don't fail if it's not installed
-try:
-    import openai
-    OPENAI_AVAILABLE = True
-except ImportError:
-    OPENAI_AVAILABLE = False
-    logger.warning("OpenAI library not available. Chatbot will use fallback responses.")
+# Create a single, reusable client
+gemini_client = genai.Client(api_key=settings.GEMINI_API_KEY)
 
 
 def build_system_prompt(context: Optional[ConversationContext] = None) -> str:
     """Build system prompt with user context"""
-    base_prompt = """You are a compassionate mental health support assistant for Lumora, 
-a mental health tracking application. Your role is to:
+    base_prompt = """You are Lumora, a compassionate mental health support assistant. Keep responses to one or two sentences. Be warm, brief, and natural like texting a friend.
 
-1. Provide emotional support and active listening
-2. Offer evidence-based coping strategies
-3. Encourage healthy habits (sleep, exercise, social connection)
-4. Recognize when professional help is needed
-5. Never diagnose or prescribe medication
-6. Always prioritize user safety
+Only answer questions about mental health, emotions, and well-being. For other topics (math, history, science, etc.), politely decline and redirect to mental health support.
 
-Important guidelines:
-- Be empathetic, warm, and non-judgmental
-- Use simple, clear language
-- Validate feelings without dismissing concerns
-- Suggest professional help when appropriate
-- Provide crisis resources if needed (988 Suicide & Crisis Lifeline)
-- Keep responses concise and actionable
+Listen, validate feelings, suggest simple coping strategies. Never diagnose or prescribe.
 """
     
     if context:
@@ -52,78 +37,51 @@ Use this context to provide personalized support, but don't mention these number
     return base_prompt
 
 
-async def get_chatbot_response(
-    message: str,
-    conversation_history: Optional[List[ChatMessage]] = None,
-    context: Optional[ConversationContext] = None
-) -> ChatResponse:
-    """
-    Get chatbot response using OpenAI API or fallback
-    """
-    try:
-        if OPENAI_AVAILABLE and settings.OPENAI_API_KEY:
-            return await get_openai_response(message, conversation_history, context)
+def init_gemini_chat(history: Optional[List[Dict[str, str]]] = None):
+    """Initialize Gemini chat session with context"""
+    # Initialize chat with system prompt
+    system_prompt = build_system_prompt()
+    
+    # Create chat session
+    chat = gemini_client.chats.create(
+        model=settings.GEMINI_MODEL,
+        config=types.GenerateContentConfig(
+            system_instruction=system_prompt,
+            temperature=0.7,
+            top_p=0.9,
+            top_k=40,
+            seed=50
+        ),
+        history=history
+    )
+
+    return chat
+
+def message_to_dict(message):
+        """Converts a content message object to a dictionary, handling function calls and responses."""
+        parts_data = []
+        # logging.info(f"Converting message to dict: {message}")
+        for part in message.parts:
+            part_data = {}
+            if part.text is not None:
+                if message.role == 'user':
+                    part_data['text'] = part.text.split("User Prompt:", 1)[-1].strip()
+                else:
+                    part_data['text'] = part.text
+            parts_data.append(part_data)
+        return {'role': message.role, 'parts': parts_data}
+    
+def dict_to_message(data):
+    """Converts a dictionary back to a content message object, handling function calls and responses."""
+    parts = []
+
+    for part_data in data['parts']:
+        if 'text' in part_data:
+            parts.append(types.Part(text=part_data['text']))
         else:
-            return get_fallback_response(message)
-            
-    except Exception as e:
-        logger.error(f"Chatbot error: {str(e)}")
-        return ChatResponse(
-            message="I apologize, but I'm having trouble processing your message right now. Please try again in a moment.",
-            timestamp=datetime.utcnow(),
-            suggestions=["Try again", "Contact support"]
-        )
+            parts.append(types.Part())  # Handle cases with no specific content
 
-
-async def get_openai_response(
-    message: str,
-    conversation_history: Optional[List[ChatMessage]] = None,
-    context: Optional[ConversationContext] = None
-) -> ChatResponse:
-    """Get response from OpenAI GPT model"""
-    try:
-        # Initialize OpenAI client
-        client = openai.OpenAI(api_key=settings.OPENAI_API_KEY)
-        
-        # Build messages for API
-        messages = [
-            {"role": "system", "content": build_system_prompt(context)}
-        ]
-        
-        # Add conversation history
-        if conversation_history:
-            for msg in conversation_history[-10:]:  # Last 10 messages
-                messages.append({
-                    "role": msg.role,
-                    "content": msg.content
-                })
-        
-        # Add current message
-        messages.append({"role": "user", "content": message})
-        
-        # Call OpenAI API
-        response = client.chat.completions.create(
-            model=settings.CHATBOT_MODEL,
-            messages=messages,
-            max_tokens=settings.CHATBOT_MAX_TOKENS,
-            temperature=settings.CHATBOT_TEMPERATURE
-        )
-        
-        assistant_message = response.choices[0].message.content
-        
-        # Generate suggestions based on context
-        suggestions = generate_suggestions(message, context)
-        
-        return ChatResponse(
-            message=assistant_message,
-            timestamp=datetime.utcnow(),
-            suggestions=suggestions
-        )
-        
-    except Exception as e:
-        logger.error(f"OpenAI API error: {str(e)}")
-        return get_fallback_response(message)
-
+    return types.Content(role=data['role'], parts=parts)
 
 def get_fallback_response(message: str) -> ChatResponse:
     """Provide fallback responses when AI is unavailable"""
