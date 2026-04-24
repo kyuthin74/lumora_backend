@@ -8,8 +8,25 @@ from google.genai import types
 
 logger = logging.getLogger(__name__)
 
-# Create a single, reusable client
-gemini_client = genai.Client(api_key=settings.GEMINI_API_KEY)
+_gemini_client = None
+
+
+def get_gemini_client():
+    """Create and cache the Gemini client only when first used."""
+    global _gemini_client
+    if _gemini_client is not None:
+        return _gemini_client
+
+    if not settings.GEMINI_API_KEY:
+        logger.warning("GEMINI_API_KEY is not configured; chatbot AI features are disabled")
+        return None
+
+    try:
+        _gemini_client = genai.Client(api_key=settings.GEMINI_API_KEY)
+        return _gemini_client
+    except Exception as exc:
+        logger.error("Failed to initialize Gemini client: %s", exc)
+        return None
 
 
 def build_system_prompt(context: Optional[ConversationContext] = None) -> str:
@@ -39,6 +56,10 @@ Use this context to provide personalized support, but don't mention these number
 
 def init_gemini_chat(history: Optional[List[Dict[str, str]]] = None):
     """Initialize Gemini chat session with context"""
+    gemini_client = get_gemini_client()
+    if gemini_client is None:
+        return None
+
     # Initialize chat with system prompt
     system_prompt = build_system_prompt()
     
