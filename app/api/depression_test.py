@@ -38,32 +38,3 @@ def create_test(
         )
     return create_depression_test(db, depression_test)
 
-
-# @router.get(
-#     "/{test_id}",
-#     response_model=DepressionTestResponse,
-# )
-# def read_test(test_id: int, current_user=Depends(get_current_user), db: Session = Depends(get_db)):
-#     test = get_depression_test_by_id(db, test_id)
-#     if not test:
-#         raise HTTPException(status_code=404, detail="Depression test not found")
-#     if current_user.id != test.user_id:
-#         raise HTTPException(
-#             status_code=403,
-#             detail="You do not have permission to access this depression test"
-#         )
-#         raise HTTPException(status_code=404, detail="Depression test not found")
-#     return test
-
-
-# @router.get(
-#     "",
-#     response_model=List[DepressionTestResponse],
-# )
-# def read_user_tests(user_id: int, current_user=Depends(get_current_user), db: Session = Depends(get_db)):
-#     if current_user.id != user_id:
-#         raise HTTPException(
-#             status_code=403,
-#             detail="You do not have permission to access tests for this user"
-#         )
-#     return get_depression_tests_by_user(db, user_id)
