@@ -14,7 +14,8 @@ def create_mood(db: Session, user_id: int, mood: MoodCreate):
     if mood.created_at is not None:
         created_at = _as_utc(mood.created_at)
     elif mood.selected_date is not None:
-        created_at = datetime.combine(mood.selected_date, datetime.min.time(), tzinfo=timezone.utc)
+        now_utc = datetime.now(timezone.utc)
+        created_at = datetime.combine(mood.selected_date, now_utc.time(), tzinfo=timezone.utc)
     else:
         created_at = datetime.now(timezone.utc)
 
