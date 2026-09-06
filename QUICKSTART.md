@@ -26,7 +26,8 @@ copy .env.example .env
 ### 3. Run the Application
 ```powershell
 # Start the server
-uvicorn app.main:app --reload
+uvicorn app.main:app --reload --port 8000
+
 
 # Or use Python directly
 python -m app.main
