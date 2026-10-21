@@ -19,7 +19,7 @@ class PredictionService:
     def load_models(self):
         """Load the trained model and label encoders"""
         try:
-            model_path = os.path.join(os.getcwd(), "saved_models", "logistic_model.pkl")
+            model_path = os.path.join(os.getcwd(), "saved_models", "randomforest_model.pkl")
             encoders_path = os.path.join(os.getcwd(), "saved_models", "label_encoders.pkl")
             
             self.model = joblib.load(model_path)
