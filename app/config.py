@@ -28,7 +28,7 @@ class Settings(BaseSettings):
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24 * 7  # 7 days
     
     # ML Models
-    MODEL_PATH: str = "saved_models/logistic_model.pkl"
+    MODEL_PATH: str = "saved_models/randomforest_model.pkl"
     ENCODERS_PATH: str = "saved_models/label_encoders.pkl"
     
     # Email Configuration

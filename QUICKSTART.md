@@ -112,7 +112,7 @@ curl -X POST "http://localhost:8000/risk/predict" \
 The app will work without ML models, but predictions will return placeholder values. To add models:
 
 1. Train your model (see `saved_models/README.md`)
-2. Save to `saved_models/logistic_model.pkl`
+2. Save to `saved_models/randomforest_model.pkl`
 3. Save encoders to `saved_models/label_encoders.pkl`
 4. Restart the application
 

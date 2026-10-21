@@ -66,7 +66,7 @@ lumora_backend/
 │       ├── validators.py
 │       └── helpers.py
 ├── saved_models/                 # ML models directory
-│   ├── logistic_model.pkl
+│   ├── randomforest_model.pkl
 │   └── label_encoders.pkl
 ├── requirements.txt
 └── README.md
@@ -122,7 +122,7 @@ lumora_backend/
    ACCESS_TOKEN_EXPIRE_MINUTES=10080
    
    # ML Models
-   MODEL_PATH=saved_models/logistic_model.pkl
+   MODEL_PATH=saved_models/randomforest_model.pkl
    ENCODERS_PATH=saved_models/label_encoders.pkl
    
    # Email (optional)
@@ -142,7 +142,7 @@ lumora_backend/
 
 6. **Prepare ML models**
    - Place your trained model files in `saved_models/` directory
-   - Required files: `logistic_model.pkl` and `label_encoders.pkl`
+   - Required files: `randomforest_model.pkl` and `label_encoders.pkl`
 
 7. **Initialize database**
    ```bash
@@ -256,7 +256,7 @@ Authorization: Bearer <your_token>
 
 The app expects trained scikit-learn models:
 
-1. **logistic_model.pkl**: Trained classification model
+1. **randomforest_model.pkl**: Trained classification model
 2. **label_encoders.pkl**: Dictionary of LabelEncoders for categorical features
 
 ### Expected Input Features:

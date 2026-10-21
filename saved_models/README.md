@@ -4,7 +4,7 @@ This directory should contain your trained machine learning models.
 
 ## Required Files
 
-1. **logistic_model.pkl** - Your trained Logistic Regression model (or any scikit-learn classifier)
+1. **randomforest_model.pkl** - Your trained Logistic Regression model (or any scikit-learn classifier)
 2. **label_encoders.pkl** - Dictionary of fitted LabelEncoder objects for categorical features
 
 ## Model Training
@@ -58,7 +58,7 @@ model = LogisticRegression(random_state=42)
 model.fit(X_train, y_train)
 
 # Save model and encoders
-joblib.dump(model, 'saved_models/logistic_model.pkl')
+joblib.dump(model, 'saved_models/randomforest_model.pkl')
 joblib.dump(encoders, 'saved_models/label_encoders.pkl')
 
 print(f"Model accuracy: {model.score(X_test, y_test):.2f}")
