@@ -28,6 +28,9 @@ logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/chatbot", tags=["Chatbot"])
 
+# user_ids that currently hold an open chat WebSocket (one connection per user)
+active_connections: set[int] = set()
+
 
 def _build_conversation_context(db: Session, user_id: int) -> ConversationContext:
     """Build personalized context from user's recent data."""
@@ -131,7 +134,14 @@ async def websocket_endpoint(websocket: WebSocket, token: str = Query(None)):
         print(user_info)
         
         user_id = user_info["user_id"]
-        
+
+        # Only one active connection per user
+        if user_id in active_connections:
+            user_id = None  # don't release the other connection's slot in finally
+            await websocket.close(code=status.WS_1008_POLICY_VIOLATION, reason="Connection already active")
+            return
+        active_connections.add(user_id)
+
         # Accept connection
         await websocket.accept()
         
@@ -227,6 +237,8 @@ async def websocket_endpoint(websocket: WebSocket, token: str = Query(None)):
         except:
             pass
     finally:
+        if user_id is not None:
+            active_connections.discard(user_id)
         # Close database session
         try:
             db.close()
