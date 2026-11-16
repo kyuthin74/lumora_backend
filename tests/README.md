@@ -1,50 +1,24 @@
 # Tests Directory
 
-This directory contains test files for the Lumora backend.
+Automated backend tests (pytest + FastAPI `TestClient`). They use an in-memory SQLite
+database and mock Gemini, SMTP and the push scheduler, so no real services are touched.
 
 ## Running Tests
 
-### Install test dependencies
-```bash
-pip install pytest pytest-asyncio httpx
-```
+Run everything from the `lumora_backend` folder, inside the virtual environment:
 
-### Run all tests
 ```bash
-pytest
-```
-
-### Run with coverage
-```bash
-pip install pytest-cov
-pytest --cov=app tests/
-```
-
-### Run specific test file
-```bash
-pytest tests/test_api.py -v
+pip install -r requirements.txt -r requirements-dev.txt
+pytest                      # all tests
+pytest tests/test_auth.py -v
+pytest --cov=app tests/     # with coverage
 ```
 
 ## Test Structure
 
-- `conftest.py` - Test configuration and fixtures
-- `test_api.py` - API endpoint tests
-- `test_auth.py` - Authentication tests (to be added)
-- `test_crud.py` - Database operation tests (to be added)
-- `test_ml.py` - ML prediction tests (to be added)
-
-## Writing Tests
-
-Example test:
-```python
-def test_example(client):
-    response = client.get("/endpoint")
-    assert response.status_code == 200
-```
-
-## Test Coverage
-
-Aim for:
-- 80%+ code coverage
-- All critical paths tested
-- Edge cases covered
+| File | Covers |
+| --- | --- |
+| `conftest.py` | Fixtures: test DB, `client`, `test_user`, `auth_token`, fake Gemini chat |
+| `test_health.py` | `/` and `/health` |
+| `test_auth.py` | Signup, duplicate email, login, `/auth/me`, unauthorized access |
+| `test_chatbot_ws.py` | `/chatbot/ws`: no/invalid/valid token, message exchange, empty message, one connection per user |
