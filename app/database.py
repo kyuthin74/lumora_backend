@@ -5,7 +5,9 @@ from app.config import Settings
 settings = Settings()
 DATABASE_URL = settings.DATABASE_URL
 
-engine = create_engine(DATABASE_URL)
+# pool_pre_ping avoids "connection closed" errors when a hosted DB
+# (e.g. Supabase pooler) drops idle connections.
+engine = create_engine(DATABASE_URL, pool_pre_ping=True)
 SessionLocal = sessionmaker(bind=engine)
 
 Base = declarative_base()

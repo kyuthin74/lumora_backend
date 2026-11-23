@@ -1,0 +1,12 @@
+venv
+.venv
+.git
+.github
+__pycache__
+*.pyc
+.env
+firebase-service-account.json
+*.db
+*.sqlite
+*.sqlite3
+tests

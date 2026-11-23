@@ -1,0 +1,26 @@
+services:
+  - type: web
+    name: lumora-backend
+    runtime: docker
+    plan: free
+    healthCheckPath: /health
+    envVars:
+      # Secrets: values are entered in the Render dashboard, never committed.
+      - key: DATABASE_URL
+        sync: false
+      - key: SECRET_KEY
+        sync: false
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: SMTP_PASSWORD
+        sync: false
+      # Non-secret settings
+      - key: DEBUG
+        value: "false"
+      - key: TIMEZONE
+        value: Asia/Bangkok
+      - key: PUSH_REMINDER_ENABLED
+        value: "true"
+      # Upload firebase-service-account.json as a Render Secret File
+      - key: FIREBASE_CREDENTIALS_PATH
+        value: /etc/secrets/firebase-service-account.json
